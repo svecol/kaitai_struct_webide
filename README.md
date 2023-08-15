@@ -32,7 +32,12 @@ Only got 10 in the parsing tree.
 - id: kek1
   type: kek
 ```
+## compile and run locally
 
+- `git clone --recursive https://github.com/svecol/kaitai_struct_webide`
+- `npm install`
+- `node serve.js --compile`
+- Go to [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 the rest is from the original file
 
 ## features
@@ -43,23 +48,7 @@ the rest is from the original file
 
 [Visit us on Gitter](https://gitter.im/kaitai_struct/Lobby)
 
-## demo
 
-[ide.kaitai.io](https://ide.kaitai.io/)
-
-## run locally (without compiling / modifying the source code)
-
-- Clone deploy version: `git clone https://github.com/kaitai-io/ide-kaitai-io.github.io`
-    - stable release: `/`, devel release: `/devel/`,
-- Serve on a webserver (e.g. `python3 -m http.server 8000`)
-- Go to [http://localhost:8000/](http://localhost:8000/)
-
-## compile and run locally
-
-- `git clone --recursive https://github.com/kaitai-io/kaitai_struct_webide`
-- `npm install`
-- `node serve.js --compile`
-- Go to [http://127.0.0.1:8000/](http://127.0.0.1:8000/)
 
 ## screenshots
 
