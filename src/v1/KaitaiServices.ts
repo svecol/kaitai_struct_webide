@@ -99,10 +99,50 @@ export class CompilerService {
             var ks = new KaitaiStructCompiler();
             var rReleasePromise = (debug === false || debug === "both") ? ks.compile(kslang, compilerSchema, this.jsImporter, false) : Promise.resolve(null);
             var rDebugPromise = (debug === true || debug === "both") ? ks.compile(kslang, compilerSchema, this.jsImporter, true) : Promise.resolve(null);
-            //console.log("rReleasePromise", rReleasePromise, "rDebugPromise", rDebugPromise);
+            console.log("rReleasePromise", rReleasePromise, "rDebugPromise", rDebugPromise);
             return perfCompile.done(Promise.all([rReleasePromise, rDebugPromise]))
                 .then(([rRelease, rDebug]) => {
-                    //console.log("rRelease", rRelease, "rDebug", rDebug);
+                    function findPrototypeReadCode(inputCode: string): number[] {
+                        const markerSting = ".prototype._read = function() {";
+                        const startIndex = inputCode.indexOf(markerSting);
+                
+                        if (startIndex === -1) {
+                          console.log("Pattern not found.");
+                          return;
+                        }
+                      
+                        let openBrackets = 1;
+                        let currentIndex = startIndex + markerSting.length;
+                      
+                        while (currentIndex < inputCode.length && openBrackets > 0) {
+                          if (inputCode[currentIndex] === "{") {
+                            openBrackets++;
+                          } else if (inputCode[currentIndex] === "}") {
+                            openBrackets--;
+                            if (openBrackets === 0) {
+                              const endIndex = currentIndex;
+                              const extractedCode = inputCode.substring(startIndex + markerSting.length, endIndex + 1);
+                              console.log("Found code block:");
+                              console.log(extractedCode);
+                              return [startIndex + markerSting.length, endIndex];
+                            }
+                          }
+                          currentIndex++;
+                        }
+                        console.log("No matching closing bracket found.");
+                    }
+                    
+                    console.log("rDebug len", Object.keys(rDebug).length);
+                    for (const key in rDebug) {       
+                        // change rDebug[key]
+                        // rDebug[key] = "// My injection!\n" + rDebug[key];
+                        const bodyMargins = findPrototypeReadCode(rDebug[key]);
+                        rDebug[key] = rDebug[key].substring(0, bodyMargins[0]) +
+                                        "\ntry {\n" +
+                                        rDebug[key].substring(bodyMargins[0], bodyMargins[1]) +
+                                        "\n} catch {\nthis.fuck = 0x69;\n}\n" + 
+                                        rDebug[key].substring(bodyMargins[1]);
+                    }
                     return rRelease && rDebug ? { debug: rDebug, release: rRelease } : rRelease ? rRelease : rDebug;
                 }).catch(compileErr => Promise.reject(new CompilationError("kaitai", compileErr)));
         }
