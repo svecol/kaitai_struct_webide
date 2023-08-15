@@ -7,7 +7,8 @@ Online editor / visualizer for Kaitai Struct .ksy files
 Normally when you get an error while parsing a file with your .ksy, you can't really see how exactly it failed - you get some error message in the error window and the object tree window shows the last successful parsing. This version has a hack that lets you actually see the best attempt at parsing your file till the place where the parsing is no longer possible. This includes EOF and discrepancies between the content of file and "magic constants" defined in the .ksy file.
 
 **When the parsing failed you will see no error message, but there will be an f-word key in the object tree.**
-
+![How failed parsing appears in the object tree](docs/failed_parsing_expample1.png)
+![Corresponding HEX](docs/failed_parsing_expample2.png)
 The way it works is that in the debug version of js parser the body of the read function of the root class gets enveloped with try-catch construction, which prevents getting error.
 
 This is obviously a hack - the IDE should not be parsing the code of the js-parser. So I don't propose the change to the source repository.
